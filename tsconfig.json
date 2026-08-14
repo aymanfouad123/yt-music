@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "ytm-player": ["./packages/player/src/index.ts"]
     }
   },
   "include": [
