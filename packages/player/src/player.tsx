@@ -6,13 +6,16 @@ import { useArtworkColor } from "./core/use-artwork-color";
 import { type PlayerController, useYouTubePlayer } from "./core/use-player";
 import { cx } from "./ui/cx";
 import { ErrorState, LiveRegion } from "./ui/chrome";
+import { Card } from "./variants/card";
+import { Compact } from "./variants/compact";
 import { Pill } from "./variants/pill";
 import "./styles";
 
-export type Variant = "pill";
+export type Variant = "card" | "pill";
 export type Theme = "gradient" | "dark" | "light";
 
 type LayoutProps =
+  | { variant: "card"; compact?: boolean }
   | { variant?: "pill"; compact?: never };
 
 export type YouTubeMusicPlayerProps = LayoutProps & {
@@ -27,8 +30,10 @@ export type VariantProps = {
   musicUrl: string;
 };
 
-function renderVariant(variant: Variant, props: VariantProps) {
+function renderVariant(variant: Variant, props: VariantProps, compact: boolean) {
   switch (variant) {
+    case "card":
+      return compact ? <Compact {...props} /> : <Card {...props} />;
     default:
       return <Pill {...props} />;
   }
@@ -38,6 +43,7 @@ export function YouTubeMusicPlayer({
   url,
   variant = "pill",
   theme = "gradient",
+  compact = false,
   className,
 }: YouTubeMusicPlayerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -68,6 +74,7 @@ export function YouTubeMusicPlayer({
       className={cx("ytm-root", className)}
       data-variant={variant}
       data-theme={theme}
+      data-compact={(variant === "card" && compact) || undefined}
       style={
         {
           ...(theme === "gradient" && { "--ytm-bg": background }),
@@ -85,7 +92,7 @@ export function YouTubeMusicPlayer({
         {status === "error" ? (
           <ErrorState href={playlistUrl} />
         ) : (
-          renderVariant(variant, { player, playlistUrl, musicUrl })
+          renderVariant(variant, { player, playlistUrl, musicUrl }, compact)
         )}
       </div>
       <LiveRegion track={track} />

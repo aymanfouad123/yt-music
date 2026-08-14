@@ -1,0 +1,36 @@
+.ytm-root[data-variant="card"][data-compact] {
+  min-width: min(280px, 100%);
+  max-width: 720px;
+}
+
+.ytm-compact {
+  display: grid;
+  min-height: 88px;
+  grid-template-rows: minmax(48px, auto) 24px;
+  gap: var(--ytm-space-1);
+  padding: var(--ytm-space-3) var(--ytm-space-3) 0;
+}
+
+.ytm-compact-content {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--ytm-space-3);
+}
+
+.ytm-compact .ytm-artwork {
+  width: 48px;
+  height: 48px;
+}
+
+@container (max-width: 479px) {
+  .ytm-compact .ytm-brand {
+    display: none;
+  }
+}
+
+@container (max-width: 439px) {
+  .ytm-compact .ytm-skip {
+    display: none;
+  }
+}
