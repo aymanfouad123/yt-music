@@ -1,7 +1,8 @@
 "use client";
 
-import { type KeyboardEvent, useRef } from "react";
+import { type CSSProperties, type KeyboardEvent, useRef } from "react";
 import { parsePlaylistUrl } from "./core/parse-playlist-url";
+import { useArtworkColor } from "./core/use-artwork-color";
 import { type PlayerController, useYouTubePlayer } from "./core/use-player";
 import { cx } from "./ui/cx";
 import { ErrorState, LiveRegion } from "./ui/chrome";
@@ -9,12 +10,14 @@ import { Pill } from "./variants/pill";
 import "./styles";
 
 export type Variant = "pill";
+export type Theme = "gradient" | "dark" | "light";
 
 type LayoutProps =
   | { variant?: "pill"; compact?: never };
 
 export type YouTubeMusicPlayerProps = LayoutProps & {
   url: string;
+  theme?: Theme;
   className?: string;
 };
 
@@ -34,12 +37,14 @@ function renderVariant(variant: Variant, props: VariantProps) {
 export function YouTubeMusicPlayer({
   url,
   variant = "pill",
+  theme = "gradient",
   className,
 }: YouTubeMusicPlayerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const playlistId = parsePlaylistUrl(url);
   const player = useYouTubePlayer(playlistId, mountRef);
   const { status, track, isLoading, clock, actions } = player;
+  const background = useArtworkColor(theme === "gradient" ? track?.videoId : undefined);
   const playlistUrl = playlistId
     ? `https://music.youtube.com/playlist?list=${playlistId}`
     : "https://music.youtube.com/";
@@ -62,6 +67,12 @@ export function YouTubeMusicPlayer({
     <div
       className={cx("ytm-root", className)}
       data-variant={variant}
+      data-theme={theme}
+      style={
+        {
+          ...(theme === "gradient" && { "--ytm-bg": background }),
+        } as CSSProperties
+      }
     >
       <div
         className="ytm-surface"
