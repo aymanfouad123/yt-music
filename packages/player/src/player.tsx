@@ -9,14 +9,16 @@ import { ErrorState, LiveRegion } from "./ui/chrome";
 import { Card } from "./variants/card";
 import { Compact } from "./variants/compact";
 import { Pill } from "./variants/pill";
+import { Playlist } from "./variants/playlist";
 import "./styles";
 
-export type Variant = "card" | "pill";
+export type Variant = "card" | "pill" | "playlist";
 export type Theme = "gradient" | "dark" | "light";
 
 type LayoutProps =
   | { variant: "card"; compact?: boolean }
-  | { variant?: "pill"; compact?: never };
+  | { variant?: "pill"; compact?: never }
+  | { variant: "playlist"; compact?: never };
 
 export type YouTubeMusicPlayerProps = LayoutProps & {
   url: string;
@@ -34,6 +36,8 @@ function renderVariant(variant: Variant, props: VariantProps, compact: boolean) 
   switch (variant) {
     case "card":
       return compact ? <Compact {...props} /> : <Card {...props} />;
+    case "playlist":
+      return <Playlist {...props} />;
     default:
       return <Pill {...props} />;
   }

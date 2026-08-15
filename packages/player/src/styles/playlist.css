@@ -1,0 +1,333 @@
+.ytm-root[data-variant="playlist"] {
+  --ytm-radius: 24px;
+  --ytm-title-size: 1.0625rem;
+  --ytm-title-leading: 1.375rem;
+  --ytm-title-tracking: -0.02em;
+  height: 380px;
+  min-width: min(320px, 100%);
+  max-width: 560px;
+}
+
+.ytm-playlist {
+  --ytm-row-hover: rgb(255 255 255 / 0.05);
+  --ytm-row-active: rgb(255 255 255 / 0.08);
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.ytm-root[data-theme="light"] .ytm-playlist {
+  --ytm-row-hover: rgb(0 0 0 / 0.035);
+  --ytm-row-active: rgb(0 0 0 / 0.05);
+}
+
+.ytm-playlist-head {
+  display: grid;
+  flex: none;
+  grid-template-columns: 64px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: var(--ytm-space-3);
+  padding: var(--ytm-space-4) var(--ytm-space-4) 0;
+}
+
+.ytm-playlist-head .ytm-artwork {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+}
+
+.ytm-playlist-controls {
+  display: grid;
+  flex: none;
+  gap: var(--ytm-space-2);
+  padding: var(--ytm-space-2) var(--ytm-space-4);
+}
+
+.ytm-playlist-controls .ytm-transport {
+  justify-self: center;
+}
+
+@container (min-width: 440px) {
+  .ytm-playlist-controls {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--ytm-space-3);
+  }
+}
+
+/* Track list */
+
+.ytm-tracks {
+  position: relative;
+  min-height: 0;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 4px 8px 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+  --ytm-fade-top: #000;
+  --ytm-fade-bottom: #000;
+  mask-image: linear-gradient(var(--ytm-fade-top), #000 12px, #000 calc(100% - 16px), var(--ytm-fade-bottom));
+  scrollbar-color: var(--ytm-faint) transparent;
+  scrollbar-width: thin;
+}
+
+.ytm-tracks[data-scroll-top] {
+  --ytm-fade-top: transparent;
+}
+
+.ytm-tracks[data-scroll-bottom] {
+  --ytm-fade-bottom: transparent;
+}
+
+.ytm-tracks[data-long-index] {
+  --ytm-index-width: 28px;
+}
+
+.ytm-tracks[aria-hidden] {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ytm-row {
+  display: grid;
+  width: 100%;
+  min-height: 52px;
+  --ytm-title-leading: 1.125rem;
+  --ytm-artist-leading: 1rem;
+  grid-template-columns: var(--ytm-index-width, 20px) 36px minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 8px 8px 8px 4px;
+  column-gap: 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ytm-fg);
+  cursor: pointer;
+  outline: none;
+  touch-action: manipulation;
+  user-select: none;
+  text-align: left;
+  text-decoration: none;
+  transition:
+    background-color 120ms ease,
+    transform var(--ytm-dur-press) var(--ytm-ease-out);
+}
+
+.ytm-row[data-active] {
+  background: var(--ytm-row-active);
+}
+
+.ytm-row:active {
+  transform: scale(0.99);
+}
+
+.ytm-row:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.ytm-row-index {
+  display: grid;
+  place-items: center;
+  color: var(--ytm-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.ytm-row-index svg {
+  display: none;
+  width: 16px;
+  height: 16px;
+  color: var(--ytm-fg);
+}
+
+.ytm-row:focus-visible .ytm-row-number {
+  display: none;
+}
+
+.ytm-row:focus-visible .ytm-row-index svg {
+  display: block;
+}
+
+.ytm-row-thumb {
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--ytm-skeleton);
+}
+
+.ytm-row-thumb .ytm-artwork {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  box-shadow: none;
+}
+
+.ytm-row-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  transition: opacity 200ms ease;
+}
+
+.ytm-row-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.ytm-row-title,
+.ytm-row-artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ytm-row-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: var(--ytm-title-leading);
+  letter-spacing: -0.006em;
+  opacity: 0.86;
+}
+
+.ytm-row[data-active] .ytm-row-title {
+  opacity: 1;
+}
+
+.ytm-row-artist {
+  color: var(--ytm-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: var(--ytm-artist-leading);
+}
+
+.ytm-row .ytm-skeleton-title {
+  height: 9px;
+  margin-block: calc((var(--ytm-title-leading) - 9px) / 2);
+}
+
+.ytm-row .ytm-skeleton-artist {
+  height: 8px;
+  margin-block: calc((var(--ytm-artist-leading) - 8px) / 2);
+}
+
+.ytm-row .ytm-skeleton::after {
+  content: none;
+}
+
+.ytm-tracks li:nth-child(3n + 2) .ytm-skeleton-title {
+  width: 52%;
+}
+
+.ytm-tracks li:nth-child(3n) .ytm-skeleton-title {
+  width: 38%;
+}
+
+.ytm-row-duration {
+  color: var(--ytm-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.ytm-row-more {
+  display: flex;
+  justify-content: center;
+  color: var(--ytm-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Equalizer */
+
+.ytm-eq {
+  display: flex;
+  height: 14px;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.ytm-eq > span {
+  width: 3px;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--ytm-fg);
+  transform-origin: bottom;
+  animation: ytm-eq 900ms ease-in-out -450ms infinite alternate paused;
+}
+
+.ytm-eq > :nth-child(2) {
+  animation-duration: 700ms;
+  animation-delay: -600ms;
+}
+
+.ytm-eq > :nth-child(3) {
+  animation-duration: 1100ms;
+  animation-delay: -250ms;
+}
+
+.ytm-eq[data-playing] > span {
+  animation-play-state: running;
+}
+
+@keyframes ytm-eq {
+  from {
+    transform: scaleY(0.3);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ytm-row:hover:not([data-active]) {
+    background: var(--ytm-row-hover);
+  }
+
+  .ytm-row:hover .ytm-row-number {
+    display: none;
+  }
+
+  .ytm-row:hover .ytm-row-index svg {
+    display: block;
+  }
+
+  .ytm-row-more:hover {
+    color: var(--ytm-fg);
+  }
+
+  .ytm-tracks {
+    scrollbar-color: transparent transparent;
+  }
+
+  .ytm-tracks:hover,
+  .ytm-tracks:focus-within {
+    scrollbar-color: var(--ytm-faint) transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ytm-row:active {
+    transform: none;
+  }
+
+  .ytm-eq > span {
+    animation: none;
+    transform: scaleY(0.55);
+  }
+
+  .ytm-eq > :nth-child(2) {
+    transform: none;
+  }
+
+  .ytm-eq > :nth-child(3) {
+    transform: scaleY(0.75);
+  }
+}
