@@ -6,3 +6,4 @@ import "./compact.css";
 import "./card.css";
 import "./pill.css";
 import "./playlist.css";
+import "./showcase.css";

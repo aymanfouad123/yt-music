@@ -10,15 +10,16 @@ import { Card } from "./variants/card";
 import { Compact } from "./variants/compact";
 import { Pill } from "./variants/pill";
 import { Playlist } from "./variants/playlist";
+import { Showcase } from "./variants/showcase";
 import "./styles";
 
-export type Variant = "card" | "pill" | "playlist";
+export type Variant = "card" | "pill" | "playlist" | "showcase";
 export type Theme = "gradient" | "dark" | "light";
 
 type LayoutProps =
   | { variant: "card"; compact?: boolean }
   | { variant?: "pill"; compact?: never }
-  | { variant: "playlist"; compact?: never };
+  | { variant: "playlist" | "showcase"; compact?: never };
 
 export type YouTubeMusicPlayerProps = LayoutProps & {
   url: string;
@@ -38,6 +39,8 @@ function renderVariant(variant: Variant, props: VariantProps, compact: boolean) 
       return compact ? <Compact {...props} /> : <Card {...props} />;
     case "playlist":
       return <Playlist {...props} />;
+    case "showcase":
+      return <Showcase {...props} />;
     default:
       return <Pill {...props} />;
   }
