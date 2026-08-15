@@ -30,8 +30,8 @@ type ScrubberProps = {
   duration: number;
   isPlaying: boolean;
   onSeek(seconds: number): void;
-  /** Time bubble or elapsed / remaining row. */
-  labels?: "preview" | "below";
+  /** Time bubble, elapsed / remaining row, or elapsed / total readout. */
+  labels?: "preview" | "below" | "elapsed-total";
   className?: string;
 };
 
@@ -171,7 +171,11 @@ export function Scrubber({
       {labels !== "preview" && (
         <div className="ytm-times" aria-hidden="true">
           <span ref={elapsedRef} />
-          <span ref={remainingRef} />
+          {labels === "elapsed-total" ? (
+            <><span>/</span><span>{duration > 0 ? formatTime(duration) : "–:––"}</span></>
+          ) : (
+            <span ref={remainingRef} />
+          )}
         </div>
       )}
     </div>

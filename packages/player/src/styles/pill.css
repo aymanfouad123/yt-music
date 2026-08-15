@@ -7,6 +7,21 @@
   max-width: 340px;
 }
 
+.ytm-root[data-variant="pill"][data-wide] {
+  --ytm-pill-height: 80px;
+  --ytm-pill-artwork: 56px;
+  --ytm-pill-inset: 12px;
+  --ytm-pill-block-inset: 12px;
+  max-width: 600px;
+}
+
+.ytm-root[data-variant="pill"][data-progress] {
+  --ytm-pill-height: 88px;
+  --ytm-pill-artwork: 64px;
+  --ytm-pill-inset: 12px;
+  --ytm-pill-block-inset: 8px;
+}
+
 .ytm-pill {
   display: flex;
   min-height: var(--ytm-pill-height);
@@ -36,20 +51,32 @@
   flex: none;
 }
 
+.ytm-pill .ytm-scrubber {
+  margin-top: var(--ytm-space-1);
+}
+
+.ytm-pill .ytm-scrubber-hit {
+  height: 16px;
+}
+
+/* Increase the hit area without changing the stacked readout's geometry. */
+.ytm-pill .ytm-scrubber-hit::before {
+  position: absolute;
+  inset: -4px 0;
+  content: "";
+}
+
+.ytm-pill .ytm-times {
+  justify-content: flex-start;
+  gap: var(--ytm-space-1);
+}
+
 .ytm-root[data-variant="pill"] .ytm-surface {
   box-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.07),
     inset 0 1px 0 rgb(255 255 255 / 0.08),
     0 2px 4px rgb(0 0 0 / 0.1),
     0 8px 20px -8px rgb(0 0 0 / 0.3);
-}
-
-.ytm-root[data-variant="pill"]:has(.ytm-error) {
-  --ytm-radius: 20px;
-}
-
-.ytm-root[data-variant="pill"] .ytm-error {
-  min-height: 96px;
 }
 
 .ytm-root[data-variant="pill"][data-theme="light"] .ytm-surface {
@@ -59,6 +86,25 @@
     0 8px 20px -8px rgb(0 0 0 / 0.14);
 }
 
+@container (max-width: 439px) {
+  .ytm-pill .ytm-brand {
+    display: none;
+  }
+}
+
+@container (max-width: 359px) {
+  .ytm-pill .ytm-skip {
+    display: none;
+  }
+}
+
+.ytm-root[data-variant="pill"]:has(.ytm-error) {
+  --ytm-radius: 20px;
+}
+
+.ytm-root[data-variant="pill"] .ytm-error {
+  min-height: 96px;
+}
 
 @media (prefers-contrast: more) {
   .ytm-root[data-variant="pill"][data-theme] .ytm-surface {

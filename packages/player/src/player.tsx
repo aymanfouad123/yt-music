@@ -17,9 +17,9 @@ export type Variant = "card" | "pill" | "playlist" | "showcase";
 export type Theme = "gradient" | "dark" | "light";
 
 type LayoutProps =
-  | { variant: "card"; compact?: boolean }
-  | { variant?: "pill"; compact?: never }
-  | { variant: "playlist" | "showcase"; compact?: never };
+  | { variant: "card"; compact?: boolean; wide?: never; showProgress?: never }
+  | { variant?: "pill"; wide?: boolean; compact?: never; showProgress?: boolean }
+  | { variant: "playlist" | "showcase"; compact?: never; wide?: never; showProgress?: never };
 
 export type YouTubeMusicPlayerProps = LayoutProps & {
   url: string;
@@ -33,7 +33,7 @@ export type VariantProps = {
   musicUrl: string;
 };
 
-function renderVariant(variant: Variant, props: VariantProps, compact: boolean) {
+function renderVariant(variant: Variant, props: VariantProps, compact: boolean, wide: boolean, showProgress: boolean) {
   switch (variant) {
     case "card":
       return compact ? <Compact {...props} /> : <Card {...props} />;
@@ -42,7 +42,7 @@ function renderVariant(variant: Variant, props: VariantProps, compact: boolean) 
     case "showcase":
       return <Showcase {...props} />;
     default:
-      return <Pill {...props} />;
+      return <Pill {...props} wide={wide} showProgress={showProgress} />;
   }
 }
 
@@ -51,6 +51,8 @@ export function YouTubeMusicPlayer({
   variant = "pill",
   theme = "gradient",
   compact = false,
+  wide = false,
+  showProgress = wide,
   className,
 }: YouTubeMusicPlayerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -82,6 +84,8 @@ export function YouTubeMusicPlayer({
       data-variant={variant}
       data-theme={theme}
       data-compact={(variant === "card" && compact) || undefined}
+      data-wide={(variant === "pill" && wide) || undefined}
+      data-progress={(variant === "pill" && showProgress) || undefined}
       style={
         {
           ...(theme === "gradient" && { "--ytm-bg": background }),
@@ -99,7 +103,7 @@ export function YouTubeMusicPlayer({
         {status === "error" ? (
           <ErrorState href={playlistUrl} />
         ) : (
-          renderVariant(variant, { player, playlistUrl, musicUrl }, compact)
+          renderVariant(variant, { player, playlistUrl, musicUrl }, compact, wide, showProgress)
         )}
       </div>
       <LiveRegion track={track} />
