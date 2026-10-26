@@ -1,64 +1,149 @@
-import Image from "next/image";
+"use client";
+
+import { type FormEvent, useState } from "react";
+import { parsePlaylistUrl, type Theme, type Variant, YouTubeMusicPlayer } from "ytm-player";
+import styles from "./page.module.css";
+
+const demoUrl = "https://music.youtube.com/playlist?list=PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI";
+const families = [
+  { name: "card", title: "Card", note: "A familiar player for your site. Choose Compact for a thinner view." },
+  { name: "pill", title: "Pill", note: "Add song progress and seeking, or choose Wide for track navigation." },
+  { name: "playlist", title: "Playlist", note: "Your current track and the whole playlist, ready to browse." },
+] as const;
+
+function snippet(variant: Variant, theme: Theme, url: string, compact: boolean, wide: boolean, showProgress: boolean) {
+  const props = [`url="${url}"`, `variant="${variant}"`, `theme="${theme}"`];
+  if (variant === "card" && compact) props.push("compact");
+  if (variant === "pill" && wide) props.push("wide");
+  if (variant === "pill") props.push(showProgress ? "showProgress" : "showProgress={false}");
+  return `<YouTubeMusicPlayer\n  ${props.join("\n  ")}\n/>`;
+}
+
+function CodeExample({ code, title }: { code: string; title: string }) {
+  const [result, setResult] = useState<"" | "Copied" | "Copy failed. Select the code to copy it.">("");
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setResult("Copied");
+    } catch {
+      setResult("Copy failed. Select the code to copy it.");
+    }
+  };
+  return (
+    <div className={styles.codeBlock}>
+      <div className={styles.codeHead}>
+        <span>React</span>
+        <button type="button" className={styles.copyButton} onClick={copy} aria-label={`Copy ${title} code`}>
+          {result === "Copied" ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <pre className={styles.code}><code>{code}</code></pre>
+      <span className={styles.copyStatus} role="status">{result}</span>
+    </div>
+  );
+}
 
 export default function Home() {
+  const [draftUrl, setDraftUrl] = useState(demoUrl);
+  const [playlistUrl, setPlaylistUrl] = useState(demoUrl);
+  const [theme, setTheme] = useState<Theme>("gradient");
+  const [compact, setCompact] = useState(false);
+  const [wide, setWide] = useState(false);
+  const [showProgress, setShowProgress] = useState(true);
+  const [error, setError] = useState("");
+  const [usingDemo, setUsingDemo] = useState(true);
+
+  const loadPlaylist = (event: FormEvent) => {
+    event.preventDefault();
+    const id = parsePlaylistUrl(draftUrl);
+    if (!id) {
+      setError("Enter a YouTube Music or YouTube playlist URL, or a playlist ID.");
+      return;
+    }
+    const url = `https://music.youtube.com/playlist?list=${id}`;
+    setPlaylistUrl(url);
+    setDraftUrl(url);
+    setUsingDemo(false);
+    setError("");
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <p className={styles.eyebrow}>ytm-player / made for your website</p>
+        <h1 className={styles.heading}>Good music.<br />A little more tangible.</h1>
+        <p className={styles.lede}>Small players with a sense of touch. Made for personal sites, quiet corners, and songs worth sharing.</p>
+      </header>
+
+      <div className={styles.toolbar}>
+        <label className={styles.inputLabel} htmlFor="playlist-url">Your playlist</label>
+        <form className={styles.urlForm} onSubmit={loadPlaylist}>
+          <input id="playlist-url" className={styles.urlInput} value={draftUrl}
+            onChange={(event) => { setDraftUrl(event.target.value); setError(""); }}
+            placeholder="music.youtube.com/playlist?list=…" spellCheck={false}
+            autoCapitalize="none" autoCorrect="off" aria-invalid={Boolean(error)}
+            aria-describedby={error ? "playlist-error" : "playlist-help"} />
+          <button className={styles.loadButton} type="submit">Load playlist</button>
+        </form>
+        {error && <p className={styles.error} id="playlist-error" role="alert">{error}</p>}
+        <div className={styles.toolbarRow}>
+          <p id="playlist-help" className={styles.helper} role="status">
+            {usingDemo ? "Previewing a demo playlist" : "Your playlist is loaded in every component"}
           </p>
+          <fieldset className={styles.themePicker}>
+            <legend className={styles.inputLabel}>Appearance</legend>
+            <div className={styles.segments}>
+              {(["gradient", "dark", "light"] as const).map((option) => (
+                <label className={styles.segment} key={option} data-active={theme === option}>
+                  <input type="radio" name="theme" value={option} checked={theme === option} onChange={() => setTheme(option)} />
+                  <span>{option === "gradient" ? "Gradient" : option === "dark" ? "Dark" : "Light"}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <p className={styles.helper}>Gradient follows the current thumbnail. Dark and Light keep a neutral surface.</p>
+      </div>
+
+      <main className={styles.gallery}>
+        {families.map((family, index) => {
+          const code = snippet(family.name, theme, playlistUrl, compact, wide, showProgress);
+          return (
+            <section className={styles.section} key={family.name} aria-labelledby={`family-${family.name}`}>
+              <div className={styles.sectionHead}>
+                <span className={styles.sectionNumber}>0{index + 1}</span>
+                <h2 className={styles.sectionTitle} id={`family-${family.name}`}>{family.title}</h2>
+                {(family.name === "card" || family.name === "pill") && (
+                  <label className={styles.layoutToggle}>
+                    <input type="checkbox" checked={family.name === "card" ? compact : wide}
+                      onChange={(event) => family.name === "card" ? setCompact(event.target.checked) : setWide(event.target.checked)} />
+                    {family.name === "card" ? "Compact" : "Wide"}
+                  </label>
+                )}
+                {family.name === "pill" && (
+                  <label className={styles.layoutToggle}>
+                    <input type="checkbox" checked={showProgress}
+                      onChange={(event) => setShowProgress(event.target.checked)} />
+                    Progress
+                  </label>
+                )}
+                <p className={styles.sectionNote}>{family.note}</p>
+              </div>
+              <div className={styles.preview} data-theme={theme}>
+                <div className={styles.frame}>
+                  {family.name === "card" ? (
+                    <YouTubeMusicPlayer key={playlistUrl} url={playlistUrl} variant="card" compact={compact} theme={theme} />
+                  ) : family.name === "pill" ? (
+                    <YouTubeMusicPlayer key={playlistUrl} url={playlistUrl} variant="pill" wide={wide} showProgress={showProgress} theme={theme} />
+                  ) : (
+                    <YouTubeMusicPlayer key={playlistUrl} url={playlistUrl} variant={family.name} theme={theme} />
+                  )}
+                </div>
+              </div>
+              <CodeExample key={code} code={code} title={family.title} />
+            </section>
+          );
+        })}
       </main>
     </div>
   );
