@@ -7,3 +7,4 @@ import "./card.css";
 import "./pill.css";
 import "./playlist.css";
 import "./showcase.css";
+import "./record.css";

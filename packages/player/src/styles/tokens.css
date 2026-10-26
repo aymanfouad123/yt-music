@@ -22,6 +22,8 @@
   --ytm-dur-fast: 180ms;
   --ytm-dur-base: 240ms;
   --ytm-dur-track: 280ms;
+  --ytm-dur-record-align: 360ms;
+  --ytm-dur-record-unfold: 240ms;
   --ytm-dur-ambient: 600ms;
 
   --ytm-fg: #fff;
