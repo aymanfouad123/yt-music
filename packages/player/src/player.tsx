@@ -6,6 +6,7 @@ import { useArtworkColor } from "./core/use-artwork-color";
 import { type PlayerController, useYouTubePlayer } from "./core/use-player";
 import { cx } from "./ui/cx";
 import { ErrorState, LiveRegion } from "./ui/chrome";
+import { DiscPlayer } from "./variants/disc";
 import { SleevePlayer } from "./variants/sleeve";
 import { Card } from "./variants/card";
 import { Compact } from "./variants/compact";
@@ -14,13 +15,13 @@ import { Playlist } from "./variants/playlist";
 import { Showcase } from "./variants/showcase";
 import "./styles";
 
-export type Variant = "card" | "pill" | "playlist" | "showcase" | "sleeve";
+export type Variant = "card" | "pill" | "playlist" | "showcase" | "disc" | "sleeve";
 export type Theme = "gradient" | "dark" | "light";
 
 type LayoutProps =
   | { variant: "card"; compact?: boolean; wide?: never; showProgress?: never }
   | { variant?: "pill"; wide?: boolean; compact?: never; showProgress?: boolean }
-  | { variant: "playlist" | "showcase" | "sleeve"; compact?: never; wide?: never; showProgress?: never };
+  | { variant: "playlist" | "showcase" | "disc" | "sleeve"; compact?: never; wide?: never; showProgress?: never };
 
 export type YouTubeMusicPlayerProps = LayoutProps & {
   url: string;
@@ -36,9 +37,11 @@ export type VariantProps = {
 
 function renderVariant(variant: Variant, props: VariantProps, compact: boolean, wide: boolean, showProgress: boolean) {
   switch (variant) {
+    case "disc":
     case "sleeve": {
+      const Component = variant === "disc" ? DiscPlayer : SleevePlayer;
       const { player } = props;
-      return <SleevePlayer track={player.track} isPlaying={player.isPlaying} isBuffering={player.isBuffering} disabled={player.isLoading} onToggle={player.actions.toggle} onPrevious={player.actions.previous} onNext={player.actions.next} />;
+      return <Component track={player.track} isPlaying={player.isPlaying} isBuffering={player.isBuffering} disabled={player.isLoading} onToggle={player.actions.toggle} onPrevious={player.actions.previous} onNext={player.actions.next} />;
     }
     case "card":
       return compact ? <Compact {...props} /> : <Card {...props} />;
