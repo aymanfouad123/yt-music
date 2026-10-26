@@ -148,3 +148,16 @@
 @media (prefers-reduced-motion: reduce) {
   .loadButton, .copyButton { transition: none; }
 }
+
+.recordGallery { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: min(100%, 900px); margin: 64px auto 80px; }
+.recordCard { min-width: 0; }
+.recordStage { display: grid; place-items: center; height: 380px; background: #fff; border: 1px solid #efefef; border-radius: 18px; }
+.recordLabel { display: flex; align-items: baseline; gap: 10px; margin-top: 24px; }
+.recordLabel h2 { margin: 0; font-size: 15px; font-weight: 550; letter-spacing: -0.025em; }
+.recordLabel p { margin: 0 0 0 auto; color: #888; font-size: 11px; }
+.recordHint { margin: 10px 0 20px; color: #888; font-size: 12px; }
+.recordCard .code { font-size: 10px; }
+@media (max-width: 680px) {
+  .recordGallery { grid-template-columns: 1fr; gap: 40px; margin-top: 40px; }
+  .recordStage { height: 350px; }
+}

@@ -75,6 +75,22 @@ export default function Home() {
         <p className={styles.lede}>Small players with a sense of touch. Made for personal sites, quiet corners, and songs worth sharing.</p>
       </header>
 
+      <section className={styles.recordGallery} aria-label="The record collection">
+        {([{ name: "disc", title: "Disc", note: "Less interface. More music.", hint: "Tap the disc to play. Tap again to pause." }, { name: "sleeve", title: "Sleeve", note: "A cover with something underneath.", hint: "Press play. Watch the cover become the record." }] as const).map((item, index) => (
+          <article className={styles.recordCard} key={item.name}>
+            <div className={styles.recordStage}>
+              <YouTubeMusicPlayer key={playlistUrl} url={playlistUrl} variant={item.name} theme="light" />
+            </div>
+            <div className={styles.recordLabel}>
+              <span className={styles.sectionNumber}>0{index + 1} /</span>
+              <h2>{item.title}</h2><p>{item.note}</p>
+            </div>
+            <p className={styles.recordHint}>{item.hint}</p>
+            <CodeExample code={snippet(item.name, "light", playlistUrl, false, false, false)} title={item.title} />
+          </article>
+        ))}
+      </section>
+
       <div className={styles.toolbar}>
         <label className={styles.inputLabel} htmlFor="playlist-url">Your playlist</label>
         <form className={styles.urlForm} onSubmit={loadPlaylist}>
